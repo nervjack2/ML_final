@@ -1,6 +1,7 @@
 # ML_finals
 
-Instructions:\n
+Instructions:
+
 python3 final_train.py $1 $2
 python3 final_test.py $2 $3
 
