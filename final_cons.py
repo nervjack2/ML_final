@@ -1,4 +1,4 @@
-EMBEDDING = False
+EMBEDDING = True
 EMBEDDINGALG = 'skipgram'
 sen_len = 25
 fix_embedding = True
