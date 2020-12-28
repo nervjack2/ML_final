@@ -1,6 +1,8 @@
 import numpy as np
 import pandas as pd
 import tensorflow as tf
+import re
+from clean import *
 from tensorflow.keras.layers import Dense, Input
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.models import Model
@@ -9,14 +11,18 @@ import tensorflow_hub as hub
 
 import tokenization
 
-def bert_encode(texts, tokenizer, max_len=512):
+
+def bert_encode(texts, tokenizer, max_len=256):
     all_tokens = []
     all_masks = []
     all_segments = []
-    
+    ii=0
+    f=open("./data1.csv", 'w') 
     for text in texts:
+        ii+=1
+        text = cleaning(text)
         text = tokenizer.tokenize(text)
-            
+        f.write(f'{ii},{text}\n')   
         text = text[:max_len-2]
         input_sequence = ["[CLS]"] + text + ["[SEP]"]
         pad_len = max_len - len(input_sequence)
@@ -33,7 +39,7 @@ def bert_encode(texts, tokenizer, max_len=512):
     return np.array(all_tokens), np.array(all_masks), np.array(all_segments)
 
 
-def build_model(bert_layer, max_len=512):
+def build_model(bert_layer, max_len=256):
     input_word_ids = Input(shape=(max_len,), dtype=tf.int32, name="input_word_ids")
     input_mask = Input(shape=(max_len,), dtype=tf.int32, name="input_mask")
     segment_ids = Input(shape=(max_len,), dtype=tf.int32, name="segment_ids")
@@ -50,19 +56,20 @@ def build_model(bert_layer, max_len=512):
 module_url = "https://tfhub.dev/tensorflow/bert_en_uncased_L-24_H-1024_A-16/1"
 bert_layer = hub.KerasLayer(module_url, trainable=True)
 
-train = pd.read_csv("../../ML2020FALLdata/final/train.csv")
-test = pd.read_csv("../../ML2020FALLdata/final/test.csv")
-submission = pd.read_csv("../../ML2020FALLdata/final/sample_submission.csv")
+train = pd.read_csv("./data/train.csv")
+test = pd.read_csv("./data/test.csv")
+submission = pd.read_csv("./data/sample_submission.csv")
 
 vocab_file = bert_layer.resolved_object.vocab_file.asset_path.numpy()
+print(vocab_file)
 do_lower_case = bert_layer.resolved_object.do_lower_case.numpy()
 tokenizer = tokenization.FullTokenizer(vocab_file, do_lower_case)
 
-train_input = bert_encode(train.text.values, tokenizer, max_len=160)
-test_input = bert_encode(test.text.values, tokenizer, max_len=160)
+train_input = bert_encode(train.text.values, tokenizer, max_len=80)
+#test_input = bert_encode(test.text.values, tokenizer, max_len=80)
 train_labels = train.target.values
 
-model = build_model(bert_layer, max_len=160)
+model = build_model(bert_layer, max_len=80)
 model.summary()
 
 checkpoint = ModelCheckpoint('model.h5', monitor='val_loss', save_best_only=True)
@@ -72,7 +79,7 @@ train_history = model.fit(
     validation_split=0.2,
     epochs=3,
     callbacks=[checkpoint],
-    batch_size=5
+    batch_size=10
 )
 model.load_weights('model.h5')
 test_pred = model.predict(test_input)
