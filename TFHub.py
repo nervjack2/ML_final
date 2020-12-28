@@ -52,7 +52,7 @@ def build_model(bert_layer, max_len=256):
     model.compile(Adam(lr=1e-5), loss='binary_crossentropy', metrics=['accuracy'])
     
     return model
-
+mp ="/tmp2/b07902042/model.h5"
 module_url = "https://tfhub.dev/tensorflow/bert_en_uncased_L-24_H-1024_A-16/1"
 bert_layer = hub.KerasLayer(module_url, trainable=True)
 
@@ -61,27 +61,27 @@ test = pd.read_csv("./data/test.csv")
 submission = pd.read_csv("./data/sample_submission.csv")
 
 vocab_file = bert_layer.resolved_object.vocab_file.asset_path.numpy()
-print(vocab_file)
 do_lower_case = bert_layer.resolved_object.do_lower_case.numpy()
 tokenizer = tokenization.FullTokenizer(vocab_file, do_lower_case)
 
 train_input = bert_encode(train.text.values, tokenizer, max_len=80)
-#test_input = bert_encode(test.text.values, tokenizer, max_len=80)
+test_input = bert_encode(test.text.values, tokenizer, max_len=80)
 train_labels = train.target.values
-
+#mp = './model.h5'
 model = build_model(bert_layer, max_len=80)
 model.summary()
 
-checkpoint = ModelCheckpoint('model.h5', monitor='val_loss', save_best_only=True)
+checkpoint = ModelCheckpoint(mp, monitor='val_loss', save_best_only=True)
 
 train_history = model.fit(
     train_input, train_labels,
     validation_split=0.2,
     epochs=3,
     callbacks=[checkpoint],
-    batch_size=10
+    batch_size=16
 )
-model.load_weights('model.h5')
+
+model.load_weights(mp)
 test_pred = model.predict(test_input)
 
 submission['target'] = test_pred.round().astype(int)
