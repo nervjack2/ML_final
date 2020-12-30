@@ -1,6 +1,9 @@
 import re
 def cleaning(text): 
     text = re.sub(r'https?://\S+', '', text)
+    text = re.sub(r'@\S+', '', text)
+    text = re.sub(r'[^\x00-\x7F]+','', text)   
+    text = re.sub(r"he's", "he is", text)
     text = re.sub(r"there's", "there is", text)
     text = re.sub(r"We're", "We are", text)
     text = re.sub(r"That's", "That is", text)
@@ -8,6 +11,7 @@ def cleaning(text):
     text = re.sub(r"they're", "they are", text)
     text = re.sub(r"Can't", "Cannot", text)
     text = re.sub(r"wasn't", "was not", text)
+    text = re.sub(r"wasnt", "was not", text)
     text = re.sub(r"aren't", "are not", text)
     text = re.sub(r"isn't", "is not", text)
     text = re.sub(r"What's", "What is", text)
