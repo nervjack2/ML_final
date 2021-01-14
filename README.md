@@ -1,7 +1,7 @@
-# ML_finals
+# Readme
 
-RNN:
-
+## RNN:
+### How to run
 python3 final_train.py $1 $2
 
 python3 final_test.py $2 $3
@@ -12,13 +12,11 @@ $2: test.txt path
 
 $3: predict file path
 
-env:
-
-name: hw5
-
+### Environment
 channels:
   - pytorch
   - defaults
+  
 dependencies:
   - blas=1.0=mkl
   - boto=2.49.0=py37_0
@@ -108,19 +106,19 @@ dependencies:
     - scikit-learn==0.23.2
     - scipy==1.5.4
     - threadpoolctl==2.1.0
-prefix: C:\Users\Jack\anaconda3\envs\hw5
+    
+## Bert
 
-Bert :
-
+### How to run
 python3 TFHub.py
 
-env:
+### Environment
 
-name: py37
 channels:
   - pytorch
   - huggingface
   - defaults
+  
 dependencies:
   - _tflow_select=2.3.0=gpu
   - absl-py=0.11.0=pyhd3eb1b0_1
@@ -307,4 +305,3 @@ dependencies:
     - tokenization==1.0.7
     - tokenizers==0.9.4
     - tqdm==4.50.2
-prefix: C:\Users\b07902042\Anaconda3\envs\py37
