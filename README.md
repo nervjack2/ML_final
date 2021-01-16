@@ -16,7 +16,7 @@ $3: predict file path
 channels:
   - pytorch
   - defaults
-  
+
 dependencies:
   - blas=1.0=mkl
   - boto=2.49.0=py37_0
@@ -106,11 +106,21 @@ dependencies:
     - scikit-learn==0.23.2
     - scipy==1.5.4
     - threadpoolctl==2.1.0
-    
+
 ## Bert
 
 ### How to run
-python3 TFHub.py
+python3 TFHub.py $1 $2 $3 $4 $5
+
+$1: train.csv path
+
+$2: test.csv path
+
+$3: sample_submission.csv path
+
+$4: predict file path
+
+$5: model directory path
 
 ### Environment
 
@@ -118,7 +128,7 @@ channels:
   - pytorch
   - huggingface
   - defaults
-  
+
 dependencies:
   - _tflow_select=2.3.0=gpu
   - absl-py=0.11.0=pyhd3eb1b0_1
